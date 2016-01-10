@@ -2,9 +2,17 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.jose.githubproject.MainActivity">
+
+
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never"/>
+        android:id="@+id/menu_search"
+        android:actionViewClass="android.widget.SearchView"
+        app:actionViewClass="android.widget.SearchView"
+        app:icon="@drawable/ic_search_white_24dp"
+        app:showAsAction="always"
+        android:title="Search" />
+
+    <item android:id="@+id/action_settings"
+            android:title="@string/action_settings"
+            app:showAsAction="never" />
 </menu>
