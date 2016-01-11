@@ -1,4 +1,4 @@
-package com.jose.githubproject;
+package com.jose.githubproject.ui;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -14,9 +14,15 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.SearchView;
 
+import com.jose.githubproject.R;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+
 public class MainActivity extends AppCompatActivity {
 
-    private String apiUrl = "api.github.com/";
+    protected static String apiUrl = "https://api.github.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,5 +74,18 @@ public class MainActivity extends AppCompatActivity {
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void configureDefaultImageLoader(Context context) {
+
+        ImageLoaderConfiguration defaultConfiguration
+                = new ImageLoaderConfiguration.Builder(context)
+                .threadPriority(Thread.NORM_PRIORITY - 2)
+                .denyCacheImageMultipleSizesInMemory()
+                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
+                .tasksProcessingOrder(QueueProcessingType.LIFO)
+                .build();
+
+        ImageLoader.getInstance().init(defaultConfiguration);
     }
 }

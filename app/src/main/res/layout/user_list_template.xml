@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingTop="3dp"
+              android:paddingBottom="3dp"
+              android:paddingLeft="20dp">
+
+    <com.pkmmte.view.CircularImageView
+        android:id="@+id/user_avatar"
+        android:layout_width="47dp"
+        android:layout_height="47dp"/>
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="center_vertical"/>
+
+</LinearLayout>
