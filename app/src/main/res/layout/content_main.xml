@@ -14,6 +14,12 @@
     tools:showIn="@layout/activity_main"
     android:background="@drawable/gradient_bg">
 
+    <ProgressBar
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/progress_bar_main"
+        android:layout_centerInParent="true"/>
+
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/user_info_card"
@@ -46,7 +52,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="User"/>
+                    android:textSize="18sp"
+                    android:id="@+id/selected_user_name"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:id="@+id/selected_user_creation_date"/>
 
             </LinearLayout>
 
@@ -57,10 +70,11 @@
                 android:orientation="vertical"
                 android:layout_weight="70">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Image"/>
+                <com.pkmmte.view.CircularImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/selected_user_avatar"/>
+
 
 
             </LinearLayout>
@@ -78,4 +92,20 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/search_for_user_layout"
+        android:padding="-16dp"
+        android:background="@drawable/gradient_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search for a user"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
 </RelativeLayout>

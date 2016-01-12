@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +20,7 @@ import com.jose.githubproject.R;
 import com.jose.githubproject.adapters.UserListAdapter;
 import com.jose.githubproject.alert.AlertDialogFragment;
 import com.jose.githubproject.model.GitHubUser;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.squareup.okhttp.Call;
@@ -36,7 +39,10 @@ import java.util.List;
 
 public class SearchableActivity extends ListActivity {
 
+    public static final String USER_URL = "UserUrl";
+
     private ProgressBar mProgressBar;
+    private ListActivity mListActivity;
 
     private List<GitHubUser> mGitHubUSers;
 
@@ -124,7 +130,7 @@ public class SearchableActivity extends ListActivity {
             });
         } else {
             Toast.makeText(this, "Network is unavailable!", Toast.LENGTH_LONG).show();
-            //alertUserAboutError();
+            alertUserAboutError();
         }
     }
 
@@ -164,6 +170,7 @@ public class SearchableActivity extends ListActivity {
             JSONObject item = itemsFound.getJSONObject(i);
             gitHubUser.setUserName(item.getString("login"));
             gitHubUser.setAvatarUrl(item.getString("avatar_url"));
+            gitHubUser.setUserUrl(item.getString("url"));
 
             mGitHubUSers.add(gitHubUser);
         }
@@ -187,5 +194,18 @@ public class SearchableActivity extends ListActivity {
         }
 
         return isAvailable;
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+
+        super.onListItemClick(l, v, position, id);
+
+        String userUrl = mGitHubUSers.get(position).getUserUrl();
+        //Toast.makeText(SearchableActivity.this, "URL: " + userUrl, Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(USER_URL, userUrl);
+        startActivity(intent);
+
     }
 }
