@@ -34,7 +34,7 @@ public class MyDateFormatter {
         String month = splitDate[1];
         String day = splitDate[2];
 
-        date = String.format("Joined on %s %s %s",
+        date = String.format("%s %s %s",
                 day,
                 getMonth(month),
                 year);

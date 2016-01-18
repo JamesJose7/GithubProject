@@ -60,6 +60,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="#000"
                     android:textSize="18sp"
                     android:id="@+id/selected_user_name"/>
 
@@ -81,6 +82,7 @@
                 <com.pkmmte.view.CircularImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_gravity="center|end"
                     android:id="@+id/selected_user_avatar"/>
 
 
@@ -108,6 +110,15 @@
         android:layout_below="@id/line_separator"
         android:id="@+id/repos_list_view"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:id="@+id/no_repos_found"
+            android:layout_below="@id/line_separator"
+            android:text="This user has no repositories"
+            android:layout_centerInParent="true"/>
+
 
 
     </RelativeLayout>
@@ -121,8 +132,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/search_user_text"
             android:text="Search for a user"
             android:layout_centerInParent="true"/>
+
+
 
     </RelativeLayout>
 

@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressBar mProgressBar;
     protected ListView mReposListView;
+    protected TextView mNoReposFound;
 
     private GitHubUser mGitHubUser;
     private UserRepos mUserRepos;
@@ -97,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
         RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         mainLayout.setVisibility(View.GONE);
 
+        mNoReposFound = (TextView) findViewById(R.id.no_repos_found);
+        mNoReposFound.setVisibility(View.INVISIBLE);
+
         Intent intent = getIntent();
 
         //Get extras to check if they exist
@@ -116,14 +120,14 @@ public class MainActivity extends AppCompatActivity {
         //List view for repositories
         mReposListView = (ListView) findViewById(R.id.repos_list_view);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
     }
 
     private void getUserContent(String json, String contentFlag) throws JSONException {
@@ -146,10 +150,13 @@ public class MainActivity extends AppCompatActivity {
             JSONArray reposData = new JSONArray(json); //All user repositories
 
             for (int i = 0; i < reposData.length(); i++) {
-                JSONObject JsonRepo = reposData.getJSONObject(i); //Repo json
+                JSONObject jsonRepo = reposData.getJSONObject(i); //Repo json
                 Repository repo = new Repository(); //Repo data
                 //Get repo data
-                repo.setRepoName(JsonRepo.getString("name"));
+                repo.setRepoName(jsonRepo.getString("name"));
+                repo.setRepoDescription(jsonRepo.getString("description"));
+                repo.setRepoLanguage(jsonRepo.getString("language"));
+                repo.setLastUpdate(jsonRepo.getString("updated_at"));
 
                 //Add repo to list
                 mUserRepos.getRepositories().add(repo);
@@ -273,14 +280,21 @@ public class MainActivity extends AppCompatActivity {
 
         userName.setText(mGitHubUser.getUserName());
 
-        MyDateFormatter formatter = new MyDateFormatter(mGitHubUser.getCreationDate());
-        creationDate.setText(formatter.getDate());
+        String dateText = "Joined on " + formatDate(mGitHubUser.getCreationDate());
+        creationDate.setText(dateText);
 
         imageLoader.displayImage(mGitHubUser.getAvatarUrl(), userAvatar, options);
 
         //Repositories data
         RepositoriesAdapter repositoriesAdapter = new RepositoriesAdapter(this, mUserRepos.getRepositories());
         mReposListView.setAdapter(repositoriesAdapter);
+
+        //let the user know when a user has no repositories
+        if (mUserRepos.getRepositories().size() == 0) {
+            mNoReposFound.setVisibility(View.VISIBLE);
+        } else {
+            mNoReposFound.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -303,6 +317,12 @@ public class MainActivity extends AppCompatActivity {
 
         return isAvailable;
     }
+
+    public static String formatDate(String date) {
+        MyDateFormatter formatter = new MyDateFormatter(date);
+        return formatter.getDate();
+    }
+
 
     public static void configureDefaultImageLoader(Context context) {
 
