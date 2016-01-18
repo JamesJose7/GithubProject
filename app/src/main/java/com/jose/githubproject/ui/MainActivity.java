@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -23,9 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jose.githubproject.R;
+import com.jose.githubproject.adapters.RepositoriesAdapter;
 import com.jose.githubproject.adapters.UserListAdapter;
 import com.jose.githubproject.alert.AlertDialogFragment;
 import com.jose.githubproject.model.GitHubUser;
+import com.jose.githubproject.model.MyDateFormatter;
+import com.jose.githubproject.model.Repository;
 import com.jose.githubproject.model.UserRepos;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -39,6 +43,10 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     protected static String apiUrl = "https://api.github.com/";
 
     private ProgressBar mProgressBar;
+    protected ListView mReposListView;
 
     private GitHubUser mGitHubUser;
     private UserRepos mUserRepos;
@@ -84,20 +93,28 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar_main);
         mProgressBar.setVisibility(View.INVISIBLE);
 
+        //Hide main layout items on launch
+        RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
+        mainLayout.setVisibility(View.GONE);
+
         Intent intent = getIntent();
 
         //Get extras to check if they exist
         Bundle extras = intent.getExtras();
         if (extras != null) {
             String userUrl = intent.getStringExtra(SearchableActivity.USER_URL);
-            Toast.makeText(this, "URL: " + userUrl, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "URL: " + userUrl, Toast.LENGTH_LONG).show();
 
             RelativeLayout searchForUserLayout = (RelativeLayout) findViewById(R.id.search_for_user_layout);
             searchForUserLayout.setVisibility(View.INVISIBLE);
+            mainLayout.setVisibility(View.VISIBLE);
 
-            getContents(userUrl);
+            getContents(userUrl, USER_JSON);
 
         }
+
+        //List view for repositories
+        mReposListView = (ListView) findViewById(R.id.repos_list_view);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -109,23 +126,34 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getUserContent(String url, String contentFlag) throws JSONException {
+    private void getUserContent(String json, String contentFlag) throws JSONException {
         //User Json data
         if (contentFlag.equals(USER_JSON)) {
             mGitHubUser = new GitHubUser();
             mUserRepos = new UserRepos();
 
-            JSONObject userData = new JSONObject(url);
+            JSONObject userData = new JSONObject(json);
             mGitHubUser.setUserName(userData.getString("login"));
             mGitHubUser.setAvatarUrl(userData.getString("avatar_url"));
             mGitHubUser.setCreationDate(userData.getString("created_at"));
 
             //Repo Json data
-            mUserRepos.setReposUrl(userData.getString("repos_url"));
+            mUserRepos.setReposUrl(userData.getString("repos_url")  + UserRepos.RESULTS_PER_PAGE_100);
+            getContents(mUserRepos.getReposUrl(), REPOS_JSON);
         }
 
         if (contentFlag.equals(REPOS_JSON)) {
+            JSONArray reposData = new JSONArray(json); //All user repositories
 
+            for (int i = 0; i < reposData.length(); i++) {
+                JSONObject JsonRepo = reposData.getJSONObject(i); //Repo json
+                Repository repo = new Repository(); //Repo data
+                //Get repo data
+                repo.setRepoName(JsonRepo.getString("name"));
+
+                //Add repo to list
+                mUserRepos.getRepositories().add(repo);
+            }
         }
 
     }
@@ -161,11 +189,16 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void getContents(String jsonUrl) {
+    public void getContents(String jsonUrl, final String contentFlag) {
 
         if (isNetworkAvailable()) {
             //Let the user know data is being loaded
-            toggleRefresh();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    toggleRefresh();
+                }
+            });
 
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -200,8 +233,11 @@ public class MainActivity extends AppCompatActivity {
                         //Diplay collected data on logcat
                         Log.v("JSON", jsonData);
                         if (response.isSuccessful()) {
-                            getUserContent(jsonData, USER_JSON);
-                            getUserContent(jsonData, REPOS_JSON);
+                            if (contentFlag.equals(USER_JSON)) {
+                                getUserContent(jsonData, USER_JSON);
+                            } else if (contentFlag.equals(REPOS_JSON)) {
+                                getUserContent(jsonData, REPOS_JSON);
+                            }
 
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -230,22 +266,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateDisplay() {
-        //Views
+        //User data views
         TextView userName = (TextView) findViewById(R.id.selected_user_name);
         TextView creationDate = (TextView) findViewById(R.id.selected_user_creation_date);
         CircularImageView userAvatar = (CircularImageView) findViewById(R.id.selected_user_avatar);
 
         userName.setText(mGitHubUser.getUserName());
 
-        
-        creationDate.setText(mGitHubUser.getCreationDate());
+        MyDateFormatter formatter = new MyDateFormatter(mGitHubUser.getCreationDate());
+        creationDate.setText(formatter.getDate());
+
         imageLoader.displayImage(mGitHubUser.getAvatarUrl(), userAvatar, options);
+
+        //Repositories data
+        RepositoriesAdapter repositoriesAdapter = new RepositoriesAdapter(this, mUserRepos.getRepositories());
+        mReposListView.setAdapter(repositoriesAdapter);
     }
 
-    /*private void parseData(String jsonData) throws JSONException {
-        JSONObject jsonObject = new JSONObject(jsonData);
-
-    }*/
 
     public void toggleRefresh() {
         if (mProgressBar.getVisibility() == View.VISIBLE) {
