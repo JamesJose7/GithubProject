@@ -136,7 +136,13 @@
             android:text="Search for a user"
             android:layout_centerInParent="true"/>
 
-
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="20dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/arrow"
+            android:layout_above="@id/search_user_text"/>
 
     </RelativeLayout>
 
