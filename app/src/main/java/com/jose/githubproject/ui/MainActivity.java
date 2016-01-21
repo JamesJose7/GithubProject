@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 repo.setRepoDescription(jsonRepo.getString("description"));
                 repo.setRepoLanguage(jsonRepo.getString("language"));
                 repo.setLastUpdate(jsonRepo.getString("updated_at"));
+                repo.setIsForked(jsonRepo.getString("fork"));
 
                 //Add repo to list
                 mUserRepos.getRepositories().add(repo);

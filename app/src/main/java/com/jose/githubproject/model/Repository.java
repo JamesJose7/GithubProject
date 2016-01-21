@@ -9,6 +9,7 @@ public class Repository {
     private String mRepoDescription;
     private String mRepoLanguage;
     private String mLastUpdate;
+    private String mIsForked;
 
     public String getRepoName() {
         return mRepoName;
@@ -40,5 +41,13 @@ public class Repository {
 
     public void setLastUpdate(String lastUpdate) {
         mLastUpdate = lastUpdate;
+    }
+
+    public String getIsForked() {
+        return mIsForked;
+    }
+
+    public void setIsForked(String isForked) {
+        mIsForked = isForked;
     }
 }

@@ -56,6 +56,7 @@ public class RepositoriesAdapter extends BaseAdapter {
             holder.repoLastUpdate = (TextView) convertView.findViewById(R.id.repo_last_update);
             holder.repoLanguage = (TextView) convertView.findViewById(R.id.repo_language);
             holder.repoLanguageLogo = (ImageView) convertView.findViewById(R.id.language_logo);
+            holder.forkedIcon = (ImageView) convertView.findViewById(R.id.forked_icon);
 
 
             convertView.setTag(holder);
@@ -80,6 +81,13 @@ public class RepositoriesAdapter extends BaseAdapter {
             else
                 holder.repoLanguage.setVisibility(View.GONE);
         }
+
+        //Displays icon if forked
+        if (mUserRepositories.get(position).getIsForked().equals("true"))
+            holder.forkedIcon.setVisibility(View.VISIBLE);
+        else
+            holder.forkedIcon.setVisibility(View.INVISIBLE);
+
         return convertView;
     }
 
@@ -89,6 +97,7 @@ public class RepositoriesAdapter extends BaseAdapter {
         TextView repoLastUpdate;
         TextView repoLanguage;
         ImageView repoLanguageLogo;
+        ImageView forkedIcon;
     }
 
     private int getLogo(String language) {
