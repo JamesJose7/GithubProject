@@ -10,6 +10,10 @@ public class Repository {
     private String mRepoLanguage;
     private String mLastUpdate;
     private String mIsForked;
+    private String mRepoUrl;
+    private String mCreation;
+    private String mOwner;
+    private String mParentOwner;
 
     public String getRepoName() {
         return mRepoName;
@@ -49,5 +53,37 @@ public class Repository {
 
     public void setIsForked(String isForked) {
         mIsForked = isForked;
+    }
+
+    public String getRepoUrl() {
+        return mRepoUrl;
+    }
+
+    public void setRepoUrl(String repoUrl) {
+        mRepoUrl = repoUrl;
+    }
+
+    public String getCreation() {
+        return mCreation;
+    }
+
+    public void setCreation(String creation) {
+        mCreation = creation;
+    }
+
+    public String getOwner() {
+        return mOwner;
+    }
+
+    public void setOwner(String owner) {
+        mOwner = owner;
+    }
+
+    public String getParentOwner() {
+        return mParentOwner;
+    }
+
+    public void setParentOwner(String parentOwner) {
+        mParentOwner = parentOwner;
     }
 }

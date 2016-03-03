@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String USER_JSON = "UserJson";
     private static final String REPOS_JSON = "ReposJson";
+
+    protected static final String SELECTED_REPO = "SelectedRepo";
 
     protected static String apiUrl = "https://api.github.com/";
 
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
             mUserRepos = new UserRepos();
 
             JSONObject userData = new JSONObject(json);
+            mGitHubUser.setName(userData.getString("name"));
             mGitHubUser.setUserName(userData.getString("login"));
             mGitHubUser.setAvatarUrl(userData.getString("avatar_url"));
             mGitHubUser.setCreationDate(userData.getString("created_at"));
@@ -158,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 repo.setRepoLanguage(jsonRepo.getString("language"));
                 repo.setLastUpdate(jsonRepo.getString("updated_at"));
                 repo.setIsForked(jsonRepo.getString("fork"));
+                repo.setRepoUrl(jsonRepo.getString("url"));
 
                 //Add repo to list
                 mUserRepos.getRepositories().add(repo);
@@ -275,9 +280,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateDisplay() {
         //User data views
+        TextView name = (TextView) findViewById(R.id.selected_user_real_name);
         TextView userName = (TextView) findViewById(R.id.selected_user_name);
         TextView creationDate = (TextView) findViewById(R.id.selected_user_creation_date);
         CircularImageView userAvatar = (CircularImageView) findViewById(R.id.selected_user_avatar);
+
+        if (!mGitHubUser.getName().equals("null"))
+            name.setText(mGitHubUser.getName());
+        else
+            name.setVisibility(View.GONE);
 
         userName.setText(mGitHubUser.getUserName());
 
@@ -289,6 +300,16 @@ public class MainActivity extends AppCompatActivity {
         //Repositories data
         RepositoriesAdapter repositoriesAdapter = new RepositoriesAdapter(this, mUserRepos.getRepositories());
         mReposListView.setAdapter(repositoriesAdapter);
+
+        mReposListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Repository selectedRepo = mUserRepos.getRepositories().get(position);
+                Intent intent = new Intent(MainActivity.this, RepoActivity.class);
+                intent.putExtra(SELECTED_REPO, selectedRepo.getRepoUrl());
+                startActivity(intent);
+            }
+        });
 
         //let the user know when a user has no repositories
         if (mUserRepos.getRepositories().size() == 0) {

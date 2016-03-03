@@ -5,4 +5,5 @@
     <string name="search_bar">Search Bar</string>
     <string name="search_label">GithubProject</string>
     <string name="search_global_description">Search Description</string>
+    <string name="title_activity_repo">RepoActivity</string>
 </resources>

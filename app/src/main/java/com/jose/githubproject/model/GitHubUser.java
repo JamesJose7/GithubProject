@@ -4,10 +4,19 @@ package com.jose.githubproject.model;
  * Created by Jose on 1/10/2016.
  */
 public class GitHubUser {
+    private String mName;
     private String mUserName;
     private String mAvatarUrl;
     private String mUserUrl;
     private String mCreationDate;
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        mName = name;
+    }
 
     public String getUserName() {
         return mUserName;
