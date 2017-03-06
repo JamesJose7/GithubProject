@@ -66,20 +66,25 @@ public class RepositoriesAdapter extends BaseAdapter {
         }
 
         holder.repoName.setText(mUserRepositories.get(position).getRepoName());
-        holder.repoDescription.setText(mUserRepositories.get(position).getRepoDescription());
+        String repoDescription = mUserRepositories.get(position).getRepoDescription();
+        if (!repoDescription.equals("null")) {
+            holder.repoDescription.setText(repoDescription);
+        } else {
+            holder.repoDescription.setText("- no description -");
+        }
 
         String updateText = "Updated " + MainActivity.formatDate(mUserRepositories.get(position).getLastUpdate());
         holder.repoLastUpdate.setText(updateText);
 
         //display image for some languages else, display text
-        if (getLogo(mUserRepositories.get(position).getRepoLanguage()) != R.drawable.image_missing)
+        if (!mUserRepositories.get(position).getRepoLanguage().equals("null"))
             holder.repoLanguageLogo.setImageResource(getLogo(mUserRepositories.get(position).getRepoLanguage()));
         else {
             holder.repoLanguageLogo.setVisibility(View.GONE);
-            if (!mUserRepositories.get(position).getRepoLanguage().equals("null"))
+            /*if (mUserRepositories.get(position).getRepoLanguage().equals("null"))
                 holder.repoLanguage.setText(mUserRepositories.get(position).getRepoLanguage());
             else
-                holder.repoLanguage.setVisibility(View.GONE);
+                holder.repoLanguage.setVisibility(View.GONE);*/
         }
 
         //Displays icon if forked
@@ -126,7 +131,7 @@ public class RepositoriesAdapter extends BaseAdapter {
                 id = R.drawable.python_logo;
                 break;
             case "javascript":
-                id = R.drawable.python_logo;
+                id = R.drawable.javascript_logo;
                 break;
             case "c":
                 id = R.drawable.c_logo;
