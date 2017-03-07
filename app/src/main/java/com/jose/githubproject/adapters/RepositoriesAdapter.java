@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jose.githubproject.R;
+import com.jose.githubproject.model.LanguageLogo;
 import com.jose.githubproject.model.Repository;
 import com.jose.githubproject.ui.MainActivity;
 import com.jose.githubproject.ui.RepoActivity;
@@ -85,7 +86,7 @@ public class RepositoriesAdapter extends RecyclerView.Adapter<RepositoriesAdapte
         public void bindRepository(Repository repository) {
             repoName.setText(repository.getRepoName());
             String description = repository.getRepoDescription();
-            if (!repoDescription.equals("null")) {
+            if (!repository.getRepoDescription().equals("null")) {
                 repoDescription.setText(description);
             } else {
                 repoDescription.setText("- no description -");
@@ -96,7 +97,7 @@ public class RepositoriesAdapter extends RecyclerView.Adapter<RepositoriesAdapte
 
             //display image for some languages else, display text
             if (!repository.getRepoLanguage().equals("null"))
-                repoLanguageLogo.setImageResource(getLogo(repository.getRepoLanguage()));
+                repoLanguageLogo.setImageResource(findLogoIdByName(repository.getRepoLanguage()));
             else {
                 //repoLanguageLogo.setVisibility(View.GONE);
 
@@ -109,66 +110,16 @@ public class RepositoriesAdapter extends RecyclerView.Adapter<RepositoriesAdapte
         }
     }
 
-    private int getLogo(String language) {
-        language = language.toLowerCase();
-        int id;
-        /*
-        Java
-        Python
-        JavaScript
-        C
-        C++
-        Ruby
-        PHP
-        Go
-        C#
-        html
-        css
-        obj-C
-        R
-        */
-        switch (language) {
-            case "java":
-                id =  R.drawable.java_logo;
-                break;
-            case "python":
-                id = R.drawable.python_logo;
-                break;
-            case "javascript":
-                id = R.drawable.javascript_logo;
-                break;
-            case "c":
-                id = R.drawable.c_logo;
-                break;
-            case "c++":
-                id = R.drawable.cpp_logo;
-                break;
-            case "ruby":
-                id = R.drawable.ruby_logo;
-                break;
-            case "php":
-                id = R.drawable.php_logo;
-                break;
-            case "c#":
-                id = R.drawable.csharp_logo;
-                break;
-            case "html":
-                id = R.drawable.html_logo;
-                break;
-            case "css":
-                id = R.drawable.css3_logo;
-                break;
-            case "objective-c":
-                id = R.drawable.objective_c_logo;
-                break;
-            case "r":
-                id = R.drawable.r_logo;
-                break;
-            default:
-                id = R.drawable.image_missing;
+
+    public int findLogoIdByName(String name) {
+        int id = LanguageLogo.NONE.getId();
+        LanguageLogo[] languageLogos = LanguageLogo.values();
+        for (LanguageLogo logo : languageLogos) {
+            if (logo.getName().equals(name.toLowerCase())) {
+                id = logo.getId();
+            }
         }
 
         return id;
     }
-
 }
