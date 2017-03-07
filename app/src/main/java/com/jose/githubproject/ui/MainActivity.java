@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getContents(String jsonUrl, final String contentFlag) {
 
-        if (isNetworkAvailable()) {
+        if (isNetworkAvailable() && jsonUrl != null) {
             //Let the user know data is being loaded
             runOnUiThread(new Runnable() {
                 @Override
