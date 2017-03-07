@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuInflater;
@@ -61,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String USER_JSON = "UserJson";
     private static final String REPOS_JSON = "ReposJson";
 
-    protected static final String SELECTED_REPO = "SelectedRepo";
+    public static final String SELECTED_REPO = "SelectedRepo";
 
     protected static String apiUrl = "https://api.github.com/";
 
     private ProgressBar mProgressBar;
-    protected ListView mReposListView;
+    protected RecyclerView mReposListView;
     protected TextView mNoReposFound;
 
     private GitHubUser mGitHubUser;
@@ -74,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
     ImageLoader imageLoader;
     DisplayImageOptions options;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //List view for repositories
-        mReposListView = (ListView) findViewById(R.id.repos_list_view);
+        mReposListView = (RecyclerView) findViewById(R.id.repos_list_view);
     }
 
     private void getUserContent(String json, String contentFlag) throws JSONException {
@@ -292,10 +296,17 @@ public class MainActivity extends AppCompatActivity {
         imageLoader.displayImage(mGitHubUser.getAvatarUrl(), userAvatar, options);
 
         //Repositories data
-        RepositoriesAdapter repositoriesAdapter = new RepositoriesAdapter(this, mUserRepos.getRepositories());
-        mReposListView.setAdapter(repositoriesAdapter);
+        Repository[] repos = new Repository[mUserRepos.getRepositories().size()];
+        repos = mUserRepos.getRepositories().toArray(repos);
+        RepositoriesAdapter adapter = new RepositoriesAdapter(repos);
 
-        mReposListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //RepositoriesAdapter repositoriesAdapter = new RepositoriesAdapter(this, mUserRepos.getRepositories());
+        mReposListView.setAdapter(adapter);
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        mReposListView.setLayoutManager(layoutManager);
+
+        /*mReposListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Repository selectedRepo = mUserRepos.getRepositories().get(position);
@@ -303,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(SELECTED_REPO, selectedRepo.getRepoUrl());
                 startActivity(intent);
             }
-        });
+        });*/
 
         //let the user know when a user has no repositories
         if (mUserRepos.getRepositories().size() == 0) {
