@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Image Loader
+        // Image Loader configuration
         configureDefaultImageLoader(this);
 
         options = new DisplayImageOptions.Builder()
@@ -94,13 +94,15 @@ public class MainActivity extends AppCompatActivity {
 
         imageLoader = ImageLoader.getInstance();
 
+        // Hide progress bar on startup
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar_main);
         mProgressBar.setVisibility(View.INVISIBLE);
 
-        //Hide main layout items on launch
+        // Hide main layout items on launch
         RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         mainLayout.setVisibility(View.GONE);
 
+        // "No repositories found" message
         mNoReposFound = (TextView) findViewById(R.id.no_repos_found);
         mNoReposFound.setVisibility(View.INVISIBLE);
 
@@ -112,25 +114,17 @@ public class MainActivity extends AppCompatActivity {
             String userUrl = intent.getStringExtra(SearchableActivity.USER_URL);
             //Toast.makeText(this, "URL: " + userUrl, Toast.LENGTH_LONG).show();
 
-            RelativeLayout searchForUserLayout = (RelativeLayout) findViewById(R.id.search_for_user_layout);
-            searchForUserLayout.setVisibility(View.INVISIBLE);
-            mainLayout.setVisibility(View.VISIBLE);
+            if (userUrl != null) {
+                RelativeLayout searchForUserLayout = (RelativeLayout) findViewById(R.id.search_for_user_layout);
+                searchForUserLayout.setVisibility(View.INVISIBLE);
+                mainLayout.setVisibility(View.VISIBLE);
 
-            getContents(userUrl, USER_JSON);
-
+                getContents(userUrl, USER_JSON);
+            }
         }
 
         //List view for repositories
         mReposListView = (ListView) findViewById(R.id.repos_list_view);
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
 
     private void getUserContent(String json, String contentFlag) throws JSONException {
@@ -204,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getContents(String jsonUrl, final String contentFlag) {
 
-        if (isNetworkAvailable()) {
+        if (isNetworkAvailable() && jsonUrl != null) {
             //Let the user know data is being loaded
             runOnUiThread(new Runnable() {
                 @Override
